@@ -3,7 +3,18 @@ tasks:
       docker-compose pull
   - command: |
       docker-compose up
-
+  - name: kubectl (download latest release)
+    command: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  - name: kubectl (download checksum)
+    command: curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+  - name: kubectl (validate binary)
+    command: echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+  - name: kubectl (install)
+    command: sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  - name: kubectl (output version)
+    command: kubectl version --client
+  - name: minikube (download binary)
+    command: curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && sudo install minikube-linux-amd64 /usr/local/bin/minikube
 
 ports:
   - port: 5000
